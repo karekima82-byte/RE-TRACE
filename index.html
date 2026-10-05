@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>RE:TRACE</title>
+<style>
+:root{--bg:#080a0f;--panel:#10141c;--line:#343b49;--text:#edf1f5;--muted:#89919f;--accent:#9ed9ff;--danger:#c96f78}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#05070a;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif}
+body{min-height:100svh}
+button{font:inherit;color:inherit}
+#game{width:100%;max-width:480px;min-height:100svh;margin:auto;background:linear-gradient(180deg,#0b0e14,#080a0f);display:flex;flex-direction:column;overflow:hidden}
+#top{height:58px;padding:10px 14px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr auto;grid-template-rows:20px 16px;background:#0c0f15}
+#day{font-size:12px;letter-spacing:.12em}
+#clock{font-family:ui-monospace,monospace;font-size:12px;color:var(--accent)}
+#place{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#loop{font-size:10px;color:#777;text-align:right}
+#scene{flex:1;min-height:0;display:flex;flex-direction:column}
+#visual{height:36svh;min-height:245px;position:relative;background:
+ radial-gradient(circle at 50% 35%,#1b2635 0,#0d131c 42%,#080a0f 80%);
+ overflow:hidden}
+#visual:before{content:"";position:absolute;inset:0;background:
+ linear-gradient(115deg,transparent 0 47%,rgba(170,210,255,.08) 48%,transparent 49%),
+ linear-gradient(35deg,transparent 0 65%,rgba(170,210,255,.05) 66%,transparent 67%)}
+#visual .trace{position:absolute;inset:18% 12%;border:1px solid rgba(158,217,255,.13);transform:skewY(-5deg)}
+#visual .trace:after{content:"RE:TRACE";position:absolute;right:6%;bottom:8%;font:28px Georgia,serif;letter-spacing:.22em;color:rgba(230,240,250,.12)}
+#character{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-family:Georgia,serif;font-size:62px;color:rgba(230,240,250,.18);letter-spacing:.08em}
+#visual[data-char="SYSTEM"] #character{display:none}
+#dialogue{position:relative;background:linear-gradient(180deg,#11151d,#0b0e14);border-top:1px solid #303743;padding:13px 14px 8px}
+#speaker{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:7px;min-height:18px}
+#text{font-family:"Noto Serif JP",serif;font-size:16px;line-height:1.8;white-space:pre-line;min-height:105px}
+#tap{height:20px;text-align:right;color:#626b78;font-size:9px;letter-spacing:.1em}
+#choices{display:grid;gap:7px;margin:5px 0 8px}
+.choice{background:#141923;border:1px solid #414958;border-radius:5px;padding:10px;text-align:left;font-size:14px}
+.choice:active{background:#1d2531}
+#nav{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line);background:#0b0e13;padding-bottom:env(safe-area-inset-bottom)}
+.nav{border:0;border-right:1px solid #242a34;background:none;padding:11px 3px 9px;color:#7e8795;font-size:9px}
+.nav b{display:block;font-size:15px;font-weight:400;margin-bottom:2px;color:#b8c0cb}
+#panel{position:fixed;inset:0;background:rgba(3,5,8,.88);display:none;align-items:flex-end;z-index:20}
+#panel.open{display:flex}
+.card{width:100%;max-width:480px;margin:auto;background:#0e1219;border:1px solid #3b4350;border-bottom:0;border-radius:12px 12px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:78svh;overflow:auto}
+.card h2{margin:0 0 14px;font:22px Georgia,serif;letter-spacing:.08em}
+.row{display:flex;justify-content:space-between;border-bottom:1px solid #272e39;padding:9px 0;font-size:13px}.dim{color:#7f8896}
+.close{width:100%;margin-top:14px;padding:11px;background:#171c25;border:1px solid #444c59;border-radius:5px}
+#title{position:fixed;inset:0;background:radial-gradient(circle at 50% 35%,#172130,#07090d 68%);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px}
+#title.hide{display:none}
+.logo{font:54px Georgia,serif;letter-spacing:.24em;margin-left:.24em}
+.jp{font-size:11px;letter-spacing:.55em;color:#8f9aa8;margin-top:8px}
+.rule{width:180px;height:1px;background:#647180;margin:30px 0}
+.start{width:220px;padding:13px;background:#111722;border:1px solid #8294a8;border-radius:4px;letter-spacing:.18em}
+.sub{margin-top:14px;color:#606b79;font-size:9px;letter-spacing:.12em}
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#121821;border:1px solid #465262;padding:8px 12px;border-radius:4px;font-size:11px;opacity:0;pointer-events:none;transition:.2s;z-index:60}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="title">
+  <div class="logo">RE:TRACE</div>
+  <div class="jp">もう一度、選びなおす</div>
+  <div class="rule"></div>
+  <button class="start" onclick="startGame()">NEW GAME</button>
+  <div class="sub">CHAPTER 1　3,000億円の男</div>
+</div>
+
+<div id="game">
+  <header id="top">
+    <div id="day">DAY 01</div><div id="clock">13:18:42</div>
+    <div id="place">東京・M&amp;F FUTURE HOLDINGS</div><div id="loop">LIFE 01</div>
+  </header>
+
+  <section id="scene">
+    <div id="visual"><div class="trace"></div><div id="character">T.</div></div>
+    <div id="dialogue">
+      <div id="speaker"></div>
+      <div id="text"></div>
+      <div id="tap">TAP / SPACE</div>
+      <div id="choices"></div>
+    </div>
+  </section>
+
+  <nav id="nav">
+    <button class="nav" onclick="openPanel('status')"><b>◈</b>STATUS</button>
+    <button class="nav" onclick="openPanel('life')"><b>◷</b>LIFE LOG</button>
+    <button class="nav" onclick="openPanel('next')"><b>◇</b>NEXT</button>
+    <button class="nav" onclick="openPanel('phone')"><b>▣</b>SMART</button>
+    <button class="nav" onclick="toggleBgm()"><b>♪</b><span id="bgmLabel">BGM</span></button>
+  </nav>
+</div>
+
+<div id="panel"><div class="card"><div id="panelBody"></div><button class="close" onclick="closePanel()">CLOSE</button></div></div>
+<div id="toast"></div>
+
+<script>
+const scenes=[
+ {sp:"秘書",ch:"秘書",place:"東京・M&F FUTURE HOLDINGS",text:"「社長。本日の決裁分です。」"},
+ {sp:"拓海",ch:"T.",text:"「んー。」"},
+ {sp:"秘書",ch:"秘書",text:"「全部です。」"},
+ {sp:"拓海",ch:"T.",text:"「多くない？」"},
+ {sp:"秘書",ch:"秘書",text:"「社長ですので。」"},
+ {sp:"拓海",ch:"T.",text:"「社長って大変だな。」"},
+ {sp:"秘書",ch:"秘書",text:"「他人事みたいに言わないでください。」"},
+ {sp:"拓海",ch:"T.",text:"「ちょっとトイレ。」",choices:[["全部見る",8],["逃げる",10]]},
+ {sp:"秘書",ch:"秘書",text:"「嘘ですね。」"},
+ {sp:"拓海",ch:"T.",text:"「なんで？」"},
+ {sp:"秘書",ch:"秘書",text:"「トイレに資料を持っていかないでしょう。」"},
+ {sp:"拓海",ch:"T.",text:"「持っていったら仕事熱心に見える？」"},
+ {sp:"秘書",ch:"秘書",text:"「余計に怪しいです。」"},
+ {sp:"拓海",ch:"T.",text:"「……この投資案件、やめといて。」"},
+ {sp:"秘書",ch:"秘書",text:"「理由は？」"},
+ {sp:"拓海",ch:"T.",text:"「数字が綺麗すぎる。」"},
+ {sp:"秘書",ch:"秘書",text:"「……！」"},
+ {sp:"拓海",ch:"T.",text:"「本当に儲かる案件って、もっと汚い数字になるから。」"},
+ {sp:"秘書",ch:"秘書",text:"「今のだけは社長らしかったです。」"},
+ {sp:"拓海",ch:"T.",text:"「だけ？」"},
+ {sp:"秘書",ch:"秘書",text:"「だけです。」"},
+ {sp:"拓海",ch:"T.",text:"「……あれ？」"},
+ {sp:"拓海",ch:"T.",text:"「この車、前にも買った気がする。」"},
+ {sp:"美咲",ch:"美咲",text:"「たっくん、また金使ったでしょ。」"},
+ {sp:"拓海",ch:"T.",text:"「なんで分かる。」"},
+ {sp:"美咲",ch:"美咲",text:"「顔。」"},
+ {sp:"拓海",ch:"T.",text:"「どんな顔？」"},
+ {sp:"美咲",ch:"美咲",text:"「金使った男の顔。」"},
+ {sp:"拓海",ch:"T.",text:"「分かりやすいな俺。」"},
+ {sp:"美咲",ch:"美咲",text:"「……でも、今回は上手くいくといいね。」"},
+ {sp:"拓海",ch:"T.",text:"「何が？」"},
+ {sp:"美咲",ch:"美咲",text:"「……なんでもない。」"},
+ {sp:"SYSTEM",ch:"SYSTEM",place:"UNKNOWN",text:"LOOP ERROR",system:true},
+ {sp:"拓海",ch:"T.",text:"「……気のせい、か。」"},
+ {sp:"SYSTEM",ch:"SYSTEM",place:"2036 / 08 / 17 23:41",text:"――その日、山田拓海は死亡する。",system:true},
+ {sp:"SYSTEM",ch:"SYSTEM",place:"LIFE LOG",text:"第1周　死亡\nLOOP COUNT　01\n\n……ここから、RE:TRACEが始まる。",system:true}
+];
+
+let i=0,started=false,bgm=null,bgmOn=true;
+const audioMap={
+ title:"02_Title_Midnight_Deduction.mp3",
+ chapter:"07_3000B_Unstable_Harmony.mp3",
+ loop:"10_LOOP_For_the_Last_Time.mp3"
+};
+function $(id){return document.getElementById(id)}
+function render(){
+ const s=scenes[i];
+ $("day").textContent="DAY "+String(Math.min(99,i+1)).padStart(2,"0");
+ $("clock").textContent=i>=33?"23:41:00":"13:18:42";
+ $("place").textContent=s.place||"東京・M&F FUTURE HOLDINGS";
+ $("loop").textContent=i>=33?"LIFE 01":"LIFE 01";
+ $("speaker").textContent=s.sp;
+ $("text").textContent=s.text;
+ $("character").textContent=s.ch;
+ $("visual").dataset.char=s.system?"SYSTEM":s.ch;
+ $("choices").innerHTML="";
+ if(s.choices)s.choices.forEach(c=>{
+   const b=document.createElement("button");b.className="choice";b.textContent="▶ "+c[0];
+   b.onclick=e=>{e.stopPropagation();i=c[1];render()};$("choices").appendChild(b);
+ });
+}
+function next(){if(!started)return;if(scenes[i].choices)return;if(i<scenes.length-1){i++;render()}else toast("CHAPTER 1 PROTOTYPE END")}
+function startGame(){
+ started=true;$("title").classList.add("hide");i=0;render();play("chapter");
+}
+function play(kind){
+ if(!bgm)bgm=new Audio("assets/audio/"+audioMap[kind]);
+ else {bgm.pause();bgm.currentTime=0;bgm.src="assets/audio/"+audioMap[kind]}
+ bgm.loop=true;bgm.volume=.32;
+ if(bgmOn)bgm.play().catch(()=>toast("BGMは画面操作後に再生されます"));
+}
+function toggleBgm(){
+ bgmOn=!bgmOn;
+ if(!bgm){play("chapter")}
+ else if(bgmOn)bgm.play(); else bgm.pause();
+ $("bgmLabel").textContent=bgmOn?"BGM":"MUTE";
+}
+function openPanel(type){
+ let body="";
+ if(type==="status") body="<h2>STATUS</h2><div class=row><span>山田 拓海</span><span class=dim>CEO</span></div><div class=row><span>所持金</span><span>¥2,840</span></div><div class=row><span>信用</span><span>？</span></div><div class=row><span>人脈</span><span>？？？</span></div><div class=row><span>情報網</span><span>？？？</span></div><div class=row><span>TRUE STATUS</span><span>LOCKED</span></div>";
+ if(type==="life") body="<h2>LIFE LOG</h2><div class=row><span>第1周</span><span>死亡</span></div><div class=row><span>第2周</span><span>？？？</span></div><div class=row><span>第3周</span><span>？？？</span></div><p class=dim>記録は増える。意味は、まだ分からない。</p>";
+ if(type==="next") body="<h2>NEXT EVENT</h2><div class=row><span>13:18</span><span>決裁</span></div><div class=row><span>14:10</span><span>美咲と接触</span></div><div class=row><span>20:30</span><span>？？？？</span></div><div class=row><span>23:41</span><span>ERROR</span></div>";
+ if(type==="phone") body="<h2>SMART</h2><div class=row><span>Messages</span><span>3</span></div><div class=row><span>Calendar</span><span>4</span></div><div class=row><span>Bank</span><span>¥2,840</span></div><div class=row><span>Hidden</span><span>LOCKED</span></div>";
+ $("panelBody").innerHTML=body;$("panel").classList.add("open");
+}
+function closePanel(){$("panel").classList.remove("open")}
+function toast(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1600)}
+document.body.addEventListener("click",e=>{
+ if(e.target.closest("button")||e.target.closest("#panel"))return;
+ next();
+});
+document.addEventListener("keydown",e=>{if(e.code==="Space"||e.code==="Enter"){e.preventDefault();next()}});
+render();
+</script>
+</body></html>
