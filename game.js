@@ -1,19 +1,14 @@
 const $=s=>document.querySelector(s);
 const screens={boot:$('#boot'),op:$('#op'),title:$('#title'),demo:$('#demo')};
 const start=$('#traceStart'),video=$('#opVideo'),skip=$('#skipOp'),voice=$('#titleVoice'),bootTheme=$('#bootTheme');
-const liveClock=$('#liveClock'),startStamp=$('#startStamp'),titleMessage=$('#titleMessage');
+const titleMessage=$('#titleMessage');
 const menu=$('#menu'),settings=$('#settings');
 let fx=true,started=false;
-const key='retrace_start_time_v06';
-function clock(){const d=new Date();const h=String(d.getHours()).padStart(2,'0'),m=String(d.getMinutes()).padStart(2,'0');liveClock.textContent=`${h}:${m}`}
-setInterval(clock,1000);clock();
-function show(name){Object.values(screens).forEach(x=>x.classList.remove('active'));screens[name].classList.add('active')}
-function saveStart(){let t=localStorage.getItem(key);if(!t){t=new Date().toISOString();localStorage.setItem(key,t)}const d=new Date(t);startStamp.textContent=`START ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
-saveStart();
 function stopBootTheme(){bootTheme.pause();bootTheme.currentTime=0;}
 function goTitle(){stopBootTheme();video.pause();video.currentTime=0;show('title');voice.currentTime=0;voice.volume=.9;voice.play().catch(()=>{});}
-function playOP(){stopBootTheme();show('op');video.currentTime=0;video.play().catch(()=>{});}
-function begin(){if(!started){saveStart();started=true} bootTheme.pause(); bootTheme.currentTime=0; playOP()}
+function playOP(){show('op');video.currentTime=0;video.play().catch(()=>{});}
+function begin(){if(!started)started=true;bootTheme.currentTime=0;bootTheme.volume=.9;bootTheme.play().catch(()=>{});playOP()}
+function show(name){Object.values(screens).forEach(x=>x.classList.remove('active'));screens[name].classList.add('active')}
 start.addEventListener('click',begin);
 skip.addEventListener('click',e=>{e.stopPropagation();goTitle()});
 video.addEventListener('ended',goTitle);
