@@ -10,45 +10,56 @@ function saveStart(){let t=localStorage.getItem(startKey);if(!t){t=new Date().to
 function waitForEnded(media){return new Promise(resolve=>{if(media.ended){resolve();return}media.addEventListener('ended',resolve,{once:true})})}
 function goTitle(){stopBootTheme();video.pause();video.currentTime=0;video.volume=1;$('#op').classList.remove('waiting');show('title');voice.currentTime=0;voice.volume=.9;voice.play().catch(()=>{});}
 function playOP(){const op=$('#op');op.classList.remove('waiting');show('op');video.currentTime=0;video.volume=1;video.play().catch(()=>{});}
-function begin(){if(started)return;started=true;saveStart();
-  const op=$('#op');
-  op.classList.add('waiting');
-  show('op');
-
-  // iOS Safari: both media elements must be started directly from this tap.
-  // Start the boot sound FIRST so it owns the audible part of the gesture.
+function begin(){
+  if(!started)return;
+}
+function bootStep(){
+  if(started)return;
+  started=true;
+  saveStart();
+  const status=$('#bootStatus');
+  status.textContent='回路起動中･･･';
+  status.className='active blink';
+  start.classList.add('locked');
   bootTheme.pause();
   bootTheme.currentTime=0;
   bootTheme.volume=.9;
-  video.pause();
-  video.currentTime=0;
-  video.volume=0;
-
-  const bootPromise=bootTheme.play();
-  if(bootPromise){
-    bootPromise.catch(()=>{started=false;op.classList.remove('waiting');});
-  }
-
-  // Authorize OP playback in the same user gesture, but keep it silent/hidden.
-  const videoPromise=video.play();
-  if(videoPromise){
-    videoPromise.catch(()=>{
-      // If Safari refuses this element, keep the boot sound playing rather than
-      // exposing the OP soundtrack early.
-      video.pause();
-      video.currentTime=0;
+  const p=bootTheme.play();
+  if(p){
+    p.catch(()=>{
+      started=false;
+      status.className='';
+      status.textContent='';
+      start.classList.remove('locked');
     });
   }
-
-  waitForEnded(bootTheme).then(()=>{
-    if(!started)return;
-    video.currentTime=0;
-    video.volume=1;
-    op.classList.remove('waiting');
-  });
+  bootTheme.addEventListener('ended',onBootEnded,{once:true});
 }
+function onBootEnded(){
+  const status=$('#bootStatus');
+  status.textContent='承認しました。TAPしてください。';
+  status.className='ready';
+  start.classList.remove('locked');
+  start.classList.add('ready');
+  start.querySelector('b').textContent='TAP';
+  start.querySelector('small').textContent='TO CONTINUE';
+}
+function startOP(){
+  const status=$('#bootStatus');
+  status.className='';
+  status.textContent='';
+  start.classList.remove('ready');
+  start.querySelector('b').textContent='TRACE';
+  start.querySelector('small').textContent='TOUCH TO BEGIN';
+  show('op');
+  video.currentTime=0;
+  video.volume=1;
+  const p=video.play();
+  if(p)p.catch(()=>{});
+}
+
 function show(name){Object.values(screens).forEach(x=>x.classList.remove('active'));screens[name].classList.add('active')}
-start.addEventListener('click',begin);
+start.addEventListener('click',()=>{if(!started)bootStep();else startOP()});
 skip.addEventListener('click',e=>{e.stopPropagation();goTitle()});
 video.addEventListener('ended',goTitle);
 menu.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const type=b.dataset.menu;if(type==='op')playOP();if(type==='start')startDemo();if(type==='continue'){message('このデモではセーブデータはありません。');}if(type==='settings')settings.classList.add('open')});
