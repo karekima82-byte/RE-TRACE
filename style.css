@@ -1,0 +1,14 @@
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#111;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans JP",sans-serif}
+#game{position:relative;width:100%;height:100%;min-height:100svh;overflow:hidden;background:#17120f;touch-action:manipulation}
+#background{position:absolute;inset:0;background:radial-gradient(circle at 50% 25%,#6f5848 0,#33261f 45%,#17120f 100%)}
+#background:after{content:"CHEAP IZAKAYA • NIGHT";position:absolute;top:12%;left:50%;transform:translateX(-50%);font-size:clamp(13px,3vw,24px);letter-spacing:.18em;color:#d7c1a8;opacity:.55}
+#characters{position:absolute;inset:0;pointer-events:none}
+.character{position:absolute;bottom:19%;width:34%;max-width:300px;height:52%;border-radius:18px 18px 5px 5px;background:linear-gradient(180deg,#20242c,#15171b);box-shadow:0 8px 30px #0008;display:flex;align-items:flex-start;justify-content:center;padding-top:5%;font-weight:700;color:#eee}
+.character span{background:#0009;padding:.35em .7em;border-radius:999px}
+#takumi{left:8%} #koichi{right:8%}
+#dialogue{position:absolute;left:4%;right:4%;bottom:3%;min-height:21%;padding:1.1rem 1.25rem 1.25rem;border:1px solid #ffffff33;border-radius:14px;background:#080808dd;color:#fff;box-shadow:0 10px 40px #0008}
+#name{display:inline-block;margin-bottom:.5rem;padding:.2rem .7rem;border-radius:5px;background:#ffffff22;font-weight:700}
+#text{font-size:clamp(18px,4.4vw,31px);line-height:1.65;letter-spacing:.02em;padding-right:2rem}
+#next{position:absolute;right:1rem;bottom:.65rem;font-size:11px;letter-spacing:.15em;opacity:.55}
+@media (orientation:landscape){#dialogue{min-height:25%;bottom:2%}.character{bottom:28%;height:60%}}
