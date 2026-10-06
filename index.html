@@ -14,7 +14,6 @@
     <div class="bootShade"></div>
     <div class="bootBrand"><div>RE:TRACE</div><small>— もう一度、選びなおす —</small></div>
     <div id="bootStatus" aria-live="polite"></div>
-    <div id="bootClock" aria-hidden="true"><span class="clockTicks"></span><span class="clockHand"></span><span class="clockCenter"></span></div>
     <button id="traceStart" aria-label="RE:TRACEを開始">
       <span class="traceRing r1"></span><span class="traceRing r2"></span><span class="traceRing r3"></span>
       <span class="traceCross"></span><span class="traceDot"></span>
@@ -25,6 +24,7 @@
   <section id="op" class="screen">
     <div id="opStart">START --:--</div>
     <video id="opVideo" playsinline preload="metadata" src="assets/video/retrace_op_final.mp4"></video>
+    <img id="opFrame" src="assets/ui/retrace_op_frame.png" alt="" aria-hidden="true">
     <button id="skipOp">SKIP OP</button>
     <div id="opHint">RE:TRACE</div>
   </section>
