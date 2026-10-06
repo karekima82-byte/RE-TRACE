@@ -11,18 +11,41 @@ function waitForEnded(media){return new Promise(resolve=>{if(media.ended){resolv
 function goTitle(){stopBootTheme();video.pause();video.currentTime=0;video.volume=1;$('#op').classList.remove('waiting');show('title');voice.currentTime=0;voice.volume=.9;voice.play().catch(()=>{});}
 function playOP(){const op=$('#op');op.classList.remove('waiting');show('op');video.currentTime=0;video.volume=1;video.play().catch(()=>{});}
 function begin(){if(started)return;started=true;saveStart();
-  // iOS Safari requires media.play() to be directly caused by the user gesture.
-  // Start the OP video in the same tap, but keep it invisible and silent while the boot sound plays.
-  const op=$('#op');op.classList.add('waiting');show('op');video.currentTime=0;video.volume=0;
-  const videoPromise=video.play();
-  bootTheme.currentTime=0;bootTheme.volume=.9;
+  const op=$('#op');
+  op.classList.add('waiting');
+  show('op');
+
+  // iOS Safari: both media elements must be started directly from this tap.
+  // Start the boot sound FIRST so it owns the audible part of the gesture.
+  bootTheme.pause();
+  bootTheme.currentTime=0;
+  bootTheme.volume=.9;
+  video.pause();
+  video.currentTime=0;
+  video.volume=0;
+
   const bootPromise=bootTheme.play();
-  if(bootPromise) bootPromise.catch(()=>{started=false;video.pause();video.currentTime=0;op.classList.remove('waiting');});
+  if(bootPromise){
+    bootPromise.catch(()=>{started=false;op.classList.remove('waiting');});
+  }
+
+  // Authorize OP playback in the same user gesture, but keep it silent/hidden.
+  const videoPromise=video.play();
+  if(videoPromise){
+    videoPromise.catch(()=>{
+      // If Safari refuses this element, keep the boot sound playing rather than
+      // exposing the OP soundtrack early.
+      video.pause();
+      video.currentTime=0;
+    });
+  }
+
   waitForEnded(bootTheme).then(()=>{
-    // Restart the already-authorized video from frame 0; no second user gesture is required.
-    video.currentTime=0;video.volume=1;op.classList.remove('waiting');
+    if(!started)return;
+    video.currentTime=0;
+    video.volume=1;
+    op.classList.remove('waiting');
   });
-  if(videoPromise) videoPromise.catch(()=>{started=false;});
 }
 function show(name){Object.values(screens).forEach(x=>x.classList.remove('active'));screens[name].classList.add('active')}
 start.addEventListener('click',begin);
