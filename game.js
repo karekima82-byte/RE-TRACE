@@ -8,9 +8,22 @@ let fx=true,started=false;
 function stopBootTheme(){bootTheme.pause();bootTheme.currentTime=0;}
 function saveStart(){let t=localStorage.getItem(startKey);if(!t){t=new Date().toISOString();localStorage.setItem(startKey,t)}const d=new Date(t);opStart.textContent=`START ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
 function waitForEnded(media){return new Promise(resolve=>{if(media.ended){resolve();return}media.addEventListener('ended',resolve,{once:true})})}
-function goTitle(){stopBootTheme();video.pause();video.currentTime=0;show('title');voice.currentTime=0;voice.volume=.9;voice.play().catch(()=>{});}
-function playOP(){show('op');video.currentTime=0;video.play().catch(()=>{});}
-async function begin(){if(started)return;started=true;saveStart();bootTheme.currentTime=0;bootTheme.volume=.9;try{await bootTheme.play();await waitForEnded(bootTheme);playOP()}catch(e){started=false;}}
+function goTitle(){stopBootTheme();video.pause();video.currentTime=0;video.volume=1;$('#op').classList.remove('waiting');show('title');voice.currentTime=0;voice.volume=.9;voice.play().catch(()=>{});}
+function playOP(){const op=$('#op');op.classList.remove('waiting');show('op');video.currentTime=0;video.volume=1;video.play().catch(()=>{});}
+function begin(){if(started)return;started=true;saveStart();
+  // iOS Safari requires media.play() to be directly caused by the user gesture.
+  // Start the OP video in the same tap, but keep it invisible and silent while the boot sound plays.
+  const op=$('#op');op.classList.add('waiting');show('op');video.currentTime=0;video.volume=0;
+  const videoPromise=video.play();
+  bootTheme.currentTime=0;bootTheme.volume=.9;
+  const bootPromise=bootTheme.play();
+  if(bootPromise) bootPromise.catch(()=>{started=false;video.pause();video.currentTime=0;op.classList.remove('waiting');});
+  waitForEnded(bootTheme).then(()=>{
+    // Restart the already-authorized video from frame 0; no second user gesture is required.
+    video.currentTime=0;video.volume=1;op.classList.remove('waiting');
+  });
+  if(videoPromise) videoPromise.catch(()=>{started=false;});
+}
 function show(name){Object.values(screens).forEach(x=>x.classList.remove('active'));screens[name].classList.add('active')}
 start.addEventListener('click',begin);
 skip.addEventListener('click',e=>{e.stopPropagation();goTitle()});
