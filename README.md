@@ -1,4 +1,4 @@
-# RE:TRACE Demo v0.4
+# RE:TRACE Demo v0.5
 
 - 9:16 iPhone向けUI
 - 最終OP動画を軽量化して収録（約6.6MB）
