@@ -1,6 +1,6 @@
 const $=s=>document.querySelector(s);
 const screens={boot:$('#boot'),op:$('#op'),title:$('#title'),demo:$('#demo')};
-const start=$('#traceStart'),video=$('#opVideo'),skip=$('#skipOp'),voice=$('#titleVoice'),bootTheme=$('#startup');
+const start=$('#traceStart'),video=$('#opVideo'),skip=$('#skipOp'),voice=$('#titleVoice'),bootTheme=$('#bootTheme');
 const liveClock=$('#liveClock'),startStamp=$('#startStamp'),titleMessage=$('#titleMessage');
 const menu=$('#menu'),settings=$('#settings');
 let fx=true,started=false;
