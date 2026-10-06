@@ -1,17 +1,6 @@
-const script = [
-  {name:"", text:"金曜の夜。駅前の安いチェーン居酒屋。", chars:["takumi","koichi"]},
-  {name:"恒一", text:"金持ちなのに俺に奢らすとか相変わらずせこいな！", chars:["takumi","koichi"], active:"koichi"},
-  {name:"拓海", text:"お前が勝手に財布忘れただけだろ。", chars:["takumi","koichi"], active:"takumi"},
-  {name:"恒一", text:"細かいこと言うなって。", chars:["takumi","koichi"], active:"koichi"},
-  {name:"拓海", text:"三千億持ってても、唐揚げは一個しかないんだよ。", chars:["takumi","koichi"], active:"takumi"},
-  {name:"恒一", text:"じゃあ、その一個を俺にくれ。", chars:["takumi","koichi"], active:"koichi"},
-  {name:"拓海", text:"嫌だ。", chars:["takumi","koichi"], active:"takumi"},
-  {name:"", text:"二人で笑う。", chars:["takumi","koichi"]},
-  {name:"拓海", text:"……こういうくだらない時間が、一番好きだった。", chars:["takumi","koichi"], active:"takumi"}
-];
-const characterAssets={takumi:"assets/characters/takumi_master.webp",koichi:"assets/characters/koichi_master.webp"};
-let i=0;
-const nameEl=document.getElementById("name"),textEl=document.getElementById("text"),charsEl=document.getElementById("characters");
-function render(){const s=script[i];nameEl.textContent=s.name;nameEl.style.display=s.name?"inline-block":"none";textEl.textContent=s.text;charsEl.innerHTML="";(s.chars||[]).forEach(id=>{const d=document.createElement("div");d.className="character "+(s.active&&s.active!==id?"dimmed":"");d.id=id;const img=document.createElement("img");img.src=characterAssets[id];img.alt=id==="takumi"?"山田拓海":"佐藤恒一";img.draggable=false;const fallback=document.createElement("div");fallback.className="asset-fallback";fallback.textContent=id==="takumi"?"拓海":"恒一";img.onerror=()=>{img.style.display="none";fallback.style.display="grid"};d.append(img,fallback);charsEl.appendChild(d)})}
-function next(){if(i<script.length-1){i++;render()}else{textEl.textContent="— プロトタイプ終了 —";nameEl.textContent="RE:TRACE";nameEl.style.display="inline-block"}}
-document.getElementById("game").addEventListener("click",next);document.addEventListener("keydown",e=>{if(e.key===" "||e.key==="Enter"||e.key==="ArrowRight")next()});render();
+const script=[{n:'',t:'金曜の夜。駅前の安いチェーン居酒屋。'},{n:'恒一',t:'乾杯！',sfx:'カチンッ！',sound:true},{n:'恒一',t:'いやー、久しぶりにこうして飲むと落ち着くな。'},{n:'拓海',t:'お前、さっきから食ってばっかじゃないか？'},{n:'恒一',t:'いいだろ。今日はお前の奢りなんだから。'},{n:'拓海',t:'……勝手に決めるなよ。'},{n:'恒一',t:'細かいこと言うなって。'},{n:'',t:'二人で笑う。'},{n:'拓海',t:'……こういうくだらない時間が、一番好きだった。'}];
+let i=0,started=false;const name=document.querySelector('#name'),text=document.querySelector('#text'),sfx=document.querySelector('#sfx'),start=document.querySelector('#start'),amb=document.querySelector('#amb'),bgm=document.querySelector('#bgm'),toast=document.querySelector('#toast');
+function render(){const x=script[i];name.textContent=x.n;name.style.display=x.n?'inline-block':'none';text.textContent=x.t;if(x.sfx)effect(x.sfx);if(x.sound){toast.currentTime=0;toast.play().catch(()=>{})}}
+function effect(t){sfx.innerHTML='';const e=document.createElement('div');e.className='sfx';e.textContent=t;sfx.append(e);requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>e.remove(),700)}
+function next(){if(!started)return;if(i<script.length-1){i++;render()}else{text.textContent='— デモ終了 —';name.textContent='RE:TRACE';name.style.display='inline-block'}}
+start.addEventListener('click',()=>{started=true;start.classList.add('hidden');amb.volume=.28;bgm.volume=.22;amb.play().catch(()=>{});bgm.play().catch(()=>{});render()});document.querySelector('#game').addEventListener('click',e=>{if(e.target!==start)next()});document.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '||e.key==='ArrowRight')next()});
