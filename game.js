@@ -1,13 +1,16 @@
 const $=s=>document.querySelector(s);
 const screens={boot:$('#boot'),op:$('#op'),title:$('#title'),demo:$('#demo')};
 const start=$('#traceStart'),video=$('#opVideo'),skip=$('#skipOp'),voice=$('#titleVoice'),bootTheme=$('#bootTheme');
-const titleMessage=$('#titleMessage');
+const titleMessage=$('#titleMessage'),opStart=$('#opStart');
+const startKey='retrace_start_time_v06';
 const menu=$('#menu'),settings=$('#settings');
 let fx=true,started=false;
 function stopBootTheme(){bootTheme.pause();bootTheme.currentTime=0;}
+function saveStart(){let t=localStorage.getItem(startKey);if(!t){t=new Date().toISOString();localStorage.setItem(startKey,t)}const d=new Date(t);opStart.textContent=`START ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
+function waitForEnded(media){return new Promise(resolve=>{if(media.ended){resolve();return}media.addEventListener('ended',resolve,{once:true})})}
 function goTitle(){stopBootTheme();video.pause();video.currentTime=0;show('title');voice.currentTime=0;voice.volume=.9;voice.play().catch(()=>{});}
 function playOP(){show('op');video.currentTime=0;video.play().catch(()=>{});}
-function begin(){if(!started)started=true;bootTheme.currentTime=0;bootTheme.volume=.9;bootTheme.play().catch(()=>{});playOP()}
+async function begin(){if(started)return;started=true;saveStart();bootTheme.currentTime=0;bootTheme.volume=.9;try{await bootTheme.play();await waitForEnded(bootTheme);playOP()}catch(e){started=false;}}
 function show(name){Object.values(screens).forEach(x=>x.classList.remove('active'));screens[name].classList.add('active')}
 start.addEventListener('click',begin);
 skip.addEventListener('click',e=>{e.stopPropagation();goTitle()});
