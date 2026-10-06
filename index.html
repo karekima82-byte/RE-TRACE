@@ -1,70 +1,11 @@
 <!doctype html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#08090d">
-<title>RE:TRACE</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<main id="game">
-  <section id="boot" class="screen active">
-    <img class="keyvisual" src="assets/ui/retrace_keyvisual.jpg" alt="RE:TRACE キービジュアル">
-    <div class="bootShade"></div>
-    <div class="bootBrand"><div>RE:TRACE</div><small>— もう一度、選びなおす —</small></div>
-    <div id="bootStatus" aria-live="polite"></div>
-    <button id="traceStart" aria-label="RE:TRACEを開始">
-      <span class="traceRing r1"></span><span class="traceRing r2"></span><span class="traceRing r3"></span>
-      <span class="traceCross"></span><span class="traceDot"></span>
-      <b>TRACE</b><small>TOUCH TO BEGIN</small>
-    </button>
-  </section>
-
-  <section id="op" class="screen">
-    <div id="opStart">START --:--</div>
-    <video id="opVideo" playsinline preload="metadata" src="assets/video/retrace_op_final.mp4"></video>
-    <img id="opFrame" src="assets/ui/retrace_op_frame.png" alt="" aria-hidden="true">
-    <button id="skipOp">SKIP OP</button>
-    <div id="opHint">RE:TRACE</div>
-  </section>
-
-  <section id="title" class="screen">
-    <img class="titleBg" src="assets/ui/retrace_keyvisual.jpg" alt="">
-    <div class="titleShade"></div>
-    <div class="titleLogo">RE:<span>TRACE</span><small>リトレース</small></div>
-    <div class="titleCatch">— もう一度、選びなおす —</div>
-    <nav id="menu">
-      <button data-menu="start">はじめから</button>
-      <button data-menu="continue">つづきから</button>
-      <button data-menu="op">OPを再生</button>
-      <button data-menu="settings">設定</button>
-    </nav>
-    <div id="titleMessage"></div>
-  </section>
-
-  <section id="settings" class="panel">
-    <div class="panelBox"><h2>設定</h2><label>画面演出 <input id="fxToggle" type="checkbox" checked></label><button id="closeSettings">戻る</button></div>
-  </section>
-
-  <section id="demo" class="screen">
-    <div id="sceneHUD">
-      <div class="sceneTop">
-        <div class="sceneBrand">RE:TRACE<small>— リトレース —</small></div>
-        <div class="sceneChapter"><span>第1章</span><strong>再会の夜</strong></div>
-      </div>
-      <div class="sceneMeta"><span>●</span> 金曜・夜 <b>20:12</b><br><em>駅前 / 居酒屋「やきとり」</em></div>
-    </div>
-    <div id="bg"></div><img id="duo" src="assets/characters/izakaya_duo.png" alt="拓海と佐藤"><div id="sfx"></div>
-    <section id="dialogue"><div id="name"></div><div id="text"></div><div id="tap">TAP</div></section>
-  </section>
-
-  <audio id="bootTheme" src="assets/audio/boot_theme.mp3" preload="auto"></audio>
-  <audio id="titleVoice" src="assets/audio/retrace_title_voice.mp3" preload="auto"></audio>
-  <audio id="amb" src="assets/audio/izakaya_ambience.mp3" loop></audio>
-  <audio id="bgm" src="assets/audio/03_Daily_Bouncy_Urban_Groove.mp3" loop></audio>
-  <audio id="toast" src="assets/audio/toast.wav"></audio>
-</main>
-<script src="game.js"></script>
-</body>
-</html>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#08090d"><title>RE:TRACE</title><link rel="stylesheet" href="style.css">
+</head><body><main id="game">
+<section id="boot" class="screen active"><img class="keyvisual" src="assets/ui/retrace_keyvisual.jpg" alt="RE:TRACE キービジュアル"><div class="bootShade"></div><div class="bootBrand"><div>RE:TRACE</div><small>— もう一度、選びなおす —</small></div><div id="bootStatus" aria-live="polite"></div><div id="bootClock" aria-hidden="true"><span class="clockTicks"></span><span class="clockHand"></span><span class="clockCenter"></span></div><button id="traceStart" aria-label="RE:TRACEを開始"><span class="traceRing r1"></span><span class="traceRing r2"></span><span class="traceRing r3"></span><span class="traceCross"></span><span class="traceDot"></span><b>TRACE</b><small>TOUCH TO BEGIN</small></button></section>
+<section id="op" class="screen"><div id="opStart">START --:--</div><video id="opVideo" playsinline preload="metadata" src="assets/video/retrace_op_final.mp4"></video><img id="opFrame" src="assets/ui/retrace_op_frame.png" alt="" aria-hidden="true"><button id="skipOp">SKIP OP</button><div id="opHint">RE:TRACE</div></section>
+<section id="title" class="screen"><img class="titleBg" src="assets/ui/retrace_keyvisual.jpg" alt=""><div class="titleShade"></div><div class="titleLogo">RE:<span>TRACE</span><small>リトレース</small></div><div class="titleCatch">— もう一度、選びなおす —</div><nav id="menu"><button data-menu="start">はじめから</button><button data-menu="continue">つづきから</button><button data-menu="op">OPを再生</button><button data-menu="settings">設定</button></nav><div id="titleMessage"></div></section>
+<section id="settings" class="panel"><div class="panelBox"><h2>設定</h2><label>画面演出 <input id="fxToggle" type="checkbox" checked></label><button id="closeSettings">戻る</button></div></section>
+<section id="demo" class="screen"><div id="sceneHUD"><div class="sceneTop"><div class="sceneBrand">RE:TRACE<small>— リトレース —</small></div><div class="sceneChapter"><span>第1章</span><strong>再会の夜</strong></div></div><div class="sceneMeta"><span>●</span> 金曜・夜 <b>20:12</b><br><em>駅前 / 居酒屋「やきとり」</em></div></div><div id="bg"></div><img id="duo" src="assets/characters/izakaya_duo.png" alt="拓海と佐藤"><div id="sfx"></div><section id="dialogue"><div id="name"></div><div id="text"></div><div id="tap">TAP</div></section></section>
+<audio id="bootTheme" src="assets/audio/boot_theme.mp3" preload="auto"></audio><audio id="titleVoice" src="assets/audio/retrace_title_voice.mp3" preload="auto"></audio><audio id="amb" src="assets/audio/izakaya_ambience.mp3" loop></audio><audio id="bgm" src="assets/audio/03_Daily_Bouncy_Urban_Groove.mp3" loop></audio><audio id="toast" src="assets/audio/toast.wav"></audio></main><script src="game.js"></script></body></html>
